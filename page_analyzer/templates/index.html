@@ -15,12 +15,12 @@
         <a class="nav-link" href="#">Сайты</a>
     </li>
 </ul>
-<form class="row g-3">
+<form action="/urls" method="post" class="row g-3">
       <h1>Анализатор страниц</h1>
       <h3>Бесплатно проверяйте сайты на SEO-пригодность</h3>
   <div class="col-auto">
     <label for="inputPassword2" class="visually-hidden">Password</label>
-    <input type="password" class="form-control" id="inputPassword2" placeholder="example.com">
+    <input name="url" type="text" class="form-control" id="inputPassword2" placeholder="example.com">
   </div>
   <div class="col-auto">
     <button type="submit" class="btn btn-primary mb-3">Проверить</button>
