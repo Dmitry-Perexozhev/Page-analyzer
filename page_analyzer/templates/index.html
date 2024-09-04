@@ -15,16 +15,19 @@
         <a class="nav-link" href="#">Сайты</a>
     </li>
 </ul>
+{% for msg in get_flashed_messages() %}
+<div class="alert alert-danger" role="alert">{{ msg }}</div>
+{% endfor %}
 <form action="/urls" method="post" class="row g-3">
-      <h1>Анализатор страниц</h1>
-      <h3>Бесплатно проверяйте сайты на SEO-пригодность</h3>
-  <div class="col-auto">
-    <label for="inputPassword2" class="visually-hidden">Password</label>
-    <input name="url" type="text" class="form-control" id="inputPassword2" placeholder="example.com">
-  </div>
-  <div class="col-auto">
-    <button type="submit" class="btn btn-primary mb-3">Проверить</button>
-  </div>
+    <h1>Анализатор страниц</h1>
+    <h3>Бесплатно проверяйте сайты на SEO-пригодность</h3>
+    <div class="col-auto">
+        <label for="inputPassword2" class="visually-hidden">Password</label>
+        <input name="url" type="text" class="form-control" id="inputPassword2" placeholder="example.com">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">Проверить</button>
+    </div>
 </form>
 </body>
 </html>

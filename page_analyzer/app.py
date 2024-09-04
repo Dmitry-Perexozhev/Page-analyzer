@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, get_flashed_messages
 from dotenv import load_dotenv
 import psycopg2
 from urllib.parse import urlparse
@@ -20,12 +20,17 @@ def index():
     return render_template('index.html')
 
 
+
 @app.post('/urls')
 def get_urls():
+
     url_post = request.form.get('url')
-    if validators.url(url_post):
-        return normalize(url_post)
-    return flash('Error', 'error')
+    if not validators.url(url_post):
+        flash('Некорректный URL', 'error')
+        return render_template('index.html')
+    return normalize(url_post)
+
+
 
 
 if __name__ == '__main__':
