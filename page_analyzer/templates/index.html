@@ -9,16 +9,16 @@
 <body class="p-3 m-0 border-0 bd-example m-0 border-0">
 <ul class="nav nav-underline">
     <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">Анализатор страниц</a>
+        <a class="nav-link active" aria-current="page" href="/">Анализатор страниц</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Сайты</a>
+        <a class="nav-link" href="/urls">Сайты</a>
     </li>
 </ul>
 {% for msg in get_flashed_messages() %}
 <div class="alert alert-danger" role="alert">{{ msg }}</div>
 {% endfor %}
-<form action="/urls" method="post" class="row g-3">
+<form action="/" method="post" class="row g-3">
     <h1>Анализатор страниц</h1>
     <h3>Бесплатно проверяйте сайты на SEO-пригодность</h3>
     <div class="col-auto">

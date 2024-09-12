@@ -22,3 +22,7 @@ build:
 
 debug:
 	poetry run flask --app page_analyzer:app --debug run
+
+database:
+	psql -U username -d postgres -a -f database.sql
+

@@ -1,5 +1,7 @@
+DROP TABLE urls;
+
 CREATE TABLE urls(
-    id integer,
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name varchar(255),
-    created_at DATE
+    created_at date
 );
