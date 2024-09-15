@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 import validators
+import requests
 from page_analyzer.db import (add_url_to_db, get_reverse_urls_from_db,
                               get_id_from_db, get_last_url_from_db,
                               add_url_to_check_db, get_current_url_from_check_db,
@@ -62,7 +63,14 @@ def show_urls():
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
-    add_url_to_check_db(id)
+    try:
+        url = get_last_url_from_db(id).name
+        url_request = requests.get(url)
+        url_request.raise_for_status()
+        status_code = url_request.status_code
+        add_url_to_check_db(id, status_code)
+    except requests.exceptions.HTTPError:
+        flash('Произошла ошибка при проверке', 'error')
     return redirect(url_for('show_current_site', id=id))
 
 

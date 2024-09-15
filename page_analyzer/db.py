@@ -71,12 +71,12 @@ def get_last_url_from_db(last_id):
             print("[INFO] PostgreSQL connection closed")
 
 
-def add_url_to_check_db(id):
+def add_url_to_check_db(id, status_code):
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
         with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s)", (id, datetime.now()))
+            cursor.execute("INSERT INTO url_checks (url_id, status_code, created_at) VALUES (%s, %s, %s)", (id, status_code, datetime.now()))
             connection.commit()
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
