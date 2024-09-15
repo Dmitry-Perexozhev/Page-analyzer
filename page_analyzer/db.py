@@ -71,12 +71,15 @@ def get_last_url_from_db(last_id):
             print("[INFO] PostgreSQL connection closed")
 
 
-def add_url_to_check_db(id, status_code):
+def add_url_to_check_db(id, status_code, parser_info):
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
         with connection.cursor() as cursor:
-            cursor.execute("INSERT INTO url_checks (url_id, status_code, created_at) VALUES (%s, %s, %s)", (id, status_code, datetime.now()))
+            cursor.execute("INSERT INTO url_checks "
+                           "(url_id, status_code, h1, title, description, created_at) "
+                           "VALUES (%s, %s, %s, %s, %s, %s)",
+                           (id, status_code, parser_info['h1'], parser_info['title'], parser_info['description'], datetime.now()))
             connection.commit()
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
@@ -107,7 +110,7 @@ def get_urls_from_both_db():
     try:
         connection = psycopg2.connect(DATABASE_URL)
         with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            cursor.execute("SELECT url_id, name, url_checks.created_at AS last_check, status_code "
+            cursor.execute("SELECT urls.id AS id, name, url_checks.created_at AS last_check, status_code "
                            "FROM urls "
                            "LEFT OUTER JOIN ("
                                "SELECT url_id, created_at, status_code "
@@ -118,7 +121,7 @@ def get_urls_from_both_db():
                                    "GROUP BY url_id)"
                                ") AS url_checks "
                            "ON urls.id=url_checks.url_id " 
-                           "ORDER BY url_id DESC"
+                           "ORDER BY id DESC"
                            )
             sites = cursor.fetchall()
             return sites

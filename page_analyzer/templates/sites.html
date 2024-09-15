@@ -29,9 +29,9 @@
     <tbody>
     {% for site in sites %}
         <tr>
-          <td>{{ site.url_id }}</td>
+          <td>{{ site.id }}</td>
             <td>
-                <a href="{{ url_for('show_current_site', id=site.url_id)}}">
+                <a href="{{ url_for('show_current_site', id=site.id)}}">
                 {{ site.name }}
                 </a>
             </td>
