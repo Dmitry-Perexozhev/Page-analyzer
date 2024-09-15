@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from urllib.parse import urlparse
 import validators
 import requests
-import secrets
 from bs4 import BeautifulSoup
 from page_analyzer.db import (add_url_to_db, get_reverse_urls_from_db,
                               get_id_from_db, get_last_url_from_db,
@@ -14,7 +13,7 @@ from page_analyzer.db import (add_url_to_db, get_reverse_urls_from_db,
 
 load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = secrets.token_hex(24)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 
