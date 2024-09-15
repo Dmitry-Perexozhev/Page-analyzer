@@ -38,6 +38,7 @@ def url_parser(url_request):
             'title': title_content}
 
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -77,7 +78,7 @@ def show_urls():
 @app.post('/urls/<id>/checks')
 def check_url(id):
     try:
-        url = get_last_url_from_db(id).name
+        url = get_last_url_from_db(id)['name']
         url_request = requests.get(url)
         url_request.raise_for_status()
         status_code = url_request.status_code
@@ -85,6 +86,7 @@ def check_url(id):
         add_url_to_check_db(id, status_code, parser_info)
     except requests.exceptions.HTTPError:
         flash('Произошла ошибка при проверке', 'error')
+        return redirect(url_for('show_current_site', id=id))
     flash('Страница успешно проверена', 'error')
     return redirect(url_for('show_current_site', id=id))
 

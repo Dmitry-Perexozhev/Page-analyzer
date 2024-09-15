@@ -2,7 +2,7 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 from datetime import datetime
-from psycopg2.extras import NamedTupleCursor
+from psycopg2.extras import RealDictCursor
 
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -27,7 +27,7 @@ def get_reverse_urls_from_db():
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
-        with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("SELECT * FROM urls ORDER BY id DESC")
             all_urls = cursor.fetchall()
             return all_urls
@@ -59,7 +59,7 @@ def get_last_url_from_db(last_id):
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
-        with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("SELECT * FROM urls WHERE id=%s", (last_id,))
             url = cursor.fetchone()
             return url
@@ -93,10 +93,11 @@ def get_current_url_from_check_db(url_id):
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
-        with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("SELECT * FROM url_checks WHERE url_id=%s ORDER BY id DESC", (url_id,))
             url = cursor.fetchall()
-            return url
+            url_remove_none = [{key:item[key] if item[key] is not None else '' for key in item} for item in url]
+            return url_remove_none
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
     finally:
@@ -109,7 +110,7 @@ def get_urls_from_both_db():
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
-        with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        with connection.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("SELECT urls.id AS id, name, url_checks.created_at AS last_check, status_code "
                            "FROM urls "
                            "LEFT OUTER JOIN ("
@@ -124,7 +125,8 @@ def get_urls_from_both_db():
                            "ORDER BY id DESC"
                            )
             sites = cursor.fetchall()
-            return sites
+            url_remove_none = [{key: item[key] if item[key] is not None else '' for key in item} for item in sites]
+            return url_remove_none
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
     finally:
