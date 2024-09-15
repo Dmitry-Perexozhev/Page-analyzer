@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 from urllib.parse import urlparse
 import validators
 from page_analyzer.db import (add_url_to_db, get_reverse_urls_from_db,
-                              get_last_id_from_db, get_last_url_from_db)
+                              get_id_from_db, get_last_url_from_db,
+                              add_url_to_check_db, get_current_url_from_check_db,
+                              get_urls_from_both_db, get_urls_name_from_db)
 
 
 load_dotenv()
@@ -16,6 +18,11 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 def normalize(url):
     url_norm = urlparse(url)
     return url_norm.scheme + '://' + url_norm.netloc
+
+
+def is_already_exist(url):
+    urls_name = get_urls_name_from_db()
+    return url in urls_name
 
 
 @app.route('/')
@@ -30,21 +37,34 @@ def get_url():
         flash('Некорректный URL', 'error')
         return render_template('index.html')
     url_norm = normalize(url_post)
+    if is_already_exist(url_norm):
+        flash('Страница уже существует', 'error')
+        id = get_id_from_db(url_norm)
+        return redirect(url_for('show_current_site', id=id))
     add_url_to_db(url_norm)
-    id = get_last_id_from_db()
+    id = get_id_from_db(url_norm)
     return redirect(url_for('show_current_site', id=id))
 
 
 @app.route('/urls/<id>')
 def show_current_site(id):
     last_url = get_last_url_from_db(id)
-    return render_template('current_site.html', last_url=last_url)
+    checks = get_current_url_from_check_db(id)
+    return render_template('current_site.html',
+                           last_url=last_url, checks=checks)
 
 
 @app.get('/urls')
 def show_urls():
-    sites = get_reverse_urls_from_db()
+    sites = get_urls_from_both_db()
     return render_template('sites.html', sites=sites)
+
+
+@app.post('/urls/<id>/checks')
+def check_url(id):
+    add_url_to_check_db(id)
+    return redirect(url_for('show_current_site', id=id))
+
 
 
 if __name__ == '__main__':

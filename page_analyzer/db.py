@@ -28,9 +28,8 @@ def get_reverse_urls_from_db():
     try:
         connection = psycopg2.connect(DATABASE_URL)
         with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            cursor.execute("SELECT * FROM urls")
+            cursor.execute("SELECT * FROM urls ORDER BY id DESC")
             all_urls = cursor.fetchall()
-            all_urls.reverse()
             return all_urls
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
@@ -40,14 +39,14 @@ def get_reverse_urls_from_db():
             print("[INFO] PostgreSQL connection closed")
 
 
-def get_last_id_from_db():
+def get_id_from_db(url_name):
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
         with connection.cursor() as cursor:
-            cursor.execute("SELECT MAX(id) FROM urls")
-            max_id = cursor.fetchone()
-            return max_id[0]
+            cursor.execute("SELECT id FROM urls WHERE name=%s", (url_name,))
+            id = cursor.fetchone()
+            return id[0]
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
     finally:
@@ -64,6 +63,81 @@ def get_last_url_from_db(last_id):
             cursor.execute("SELECT * FROM urls WHERE id=%s", (last_id,))
             url = cursor.fetchone()
             return url
+    except Exception as _ex:
+        print("[INFO] Error while working with PostgreSQL", _ex)
+    finally:
+        if connection is not None:
+            connection.close()
+            print("[INFO] PostgreSQL connection closed")
+
+
+def add_url_to_check_db(id):
+    connection = None
+    try:
+        connection = psycopg2.connect(DATABASE_URL)
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s)", (id, datetime.now()))
+            connection.commit()
+    except Exception as _ex:
+        print("[INFO] Error while working with PostgreSQL", _ex)
+    finally:
+        if connection is not None:
+            connection.close()
+            print("[INFO] PostgreSQL connection closed")
+
+
+def get_current_url_from_check_db(url_id):
+    connection = None
+    try:
+        connection = psycopg2.connect(DATABASE_URL)
+        with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
+            cursor.execute("SELECT * FROM url_checks WHERE url_id=%s ORDER BY id DESC", (url_id,))
+            url = cursor.fetchall()
+            return url
+    except Exception as _ex:
+        print("[INFO] Error while working with PostgreSQL", _ex)
+    finally:
+        if connection is not None:
+            connection.close()
+            print("[INFO] PostgreSQL connection closed")
+
+
+def get_urls_from_both_db():
+    connection = None
+    try:
+        connection = psycopg2.connect(DATABASE_URL)
+        with connection.cursor(cursor_factory=NamedTupleCursor) as cursor:
+            cursor.execute("SELECT url_id, name, url_checks.created_at AS last_check, status_code "
+                           "FROM urls "
+                           "LEFT OUTER JOIN ("
+                               "SELECT url_id, created_at, status_code "
+                               "FROM url_checks "
+                               "WHERE (url_id, id) in ("
+                                   "SELECT url_id, MAX(id) "
+                                   "FROM url_checks "
+                                   "GROUP BY url_id)"
+                               ") AS url_checks "
+                           "ON urls.id=url_checks.url_id " 
+                           "ORDER BY url_id DESC"
+                           )
+            sites = cursor.fetchall()
+            return sites
+    except Exception as _ex:
+        print("[INFO] Error while working with PostgreSQL", _ex)
+    finally:
+        if connection is not None:
+            connection.close()
+            print("[INFO] PostgreSQL connection closed")
+
+
+def get_urls_name_from_db():
+    connection = None
+    try:
+        connection = psycopg2.connect(DATABASE_URL)
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT name FROM urls")
+            all_urls = [url[0] for url in cursor.fetchall()] #преобразовать вывод в виде списка
+            return all_urls
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
     finally:

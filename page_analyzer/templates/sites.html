@@ -29,14 +29,14 @@
     <tbody>
     {% for site in sites %}
         <tr>
-          <td>{{ site.id }}</td>
+          <td>{{ site.url_id }}</td>
             <td>
-                <a href="{{ url_for('show_current_site', id=site.id)}}">
+                <a href="{{ url_for('show_current_site', id=site.url_id)}}">
                 {{ site.name }}
                 </a>
             </td>
-          <td></td>
-          <td></td>
+          <td>{{ site.last_check }}</td>
+          <td>{{ site.status_code }}</td>
         </tr>
     {% endfor %}
     </tbody>
