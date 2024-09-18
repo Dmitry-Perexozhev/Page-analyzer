@@ -1,33 +1,32 @@
 import os
+import validators
+import requests
 from flask import Flask, render_template, request, flash, redirect, url_for
 from dotenv import load_dotenv
 from urllib.parse import urlparse
-import validators
-import requests
 from bs4 import BeautifulSoup
-from page_analyzer.db import (add_url_to_db, get_reverse_urls_from_db,
-                              get_id_from_db, get_last_url_from_db,
-                              add_url_to_check_db, get_current_url_from_check_db,
-                              get_urls_from_both_db, get_urls_name_from_db)
+from page_analyzer.db import (add_url_to_urls_db, get_id_from_urls_db,
+                              get_url_from_urls_db, add_url_to_check_db,
+                              get_checks_url_from_check_db, get_urls_from_both_db,
+                              get_urls_name_from_urls_db)
 
 
 load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-DATABASE_URL = os.getenv('DATABASE_URL')
-''
 
-def normalize(url):
+
+def normalize_url(url: str) -> str:
     url_norm = urlparse(url)
     return url_norm.scheme + '://' + url_norm.netloc
 
 
-def is_already_exist(url):
-    urls_name = get_urls_name_from_db()
+def is_already_exist(url: str) -> bool:
+    urls_name = get_urls_name_from_urls_db()
     return url in urls_name
 
 
-def url_parser(url_request):
+def url_parser(url_request) -> dict[str, None]:
     soup = BeautifulSoup(url_request.content, "html.parser")
     description_tag = soup.find("meta", attrs={"name": "description"})
     description_content = description_tag.get("content") if description_tag else None
@@ -39,56 +38,56 @@ def url_parser(url_request):
 
 
 
-@app.route('/')
+@app.get('/')
 def index():
     return render_template('index.html')
 
 
 @app.post('/')
-def get_url():
-    url_post = request.form.get('url')
-    if not validators.url(url_post):
-        flash('Некорректный URL', 'error')
+def add_url():
+    accepted_url = request.form.get('url')
+    if not validators.url(accepted_url):
+        flash('Некорректный URL', 'danger')
         return render_template('index.html')
-    url_norm = normalize(url_post)
-    if is_already_exist(url_norm):
-        flash('Страница уже существует', 'error')
-        id = get_id_from_db(url_norm)
-        return redirect(url_for('show_current_site', id=id))
-    add_url_to_db(url_norm)
-    flash('Страница успешно добавлена', 'error')
-    id = get_id_from_db(url_norm)
-    return redirect(url_for('show_current_site', id=id))
-
-
-@app.route('/urls/<id>')
-def show_current_site(id):
-    last_url = get_last_url_from_db(id)
-    checks = get_current_url_from_check_db(id)
-    return render_template('current_site.html',
-                           last_url=last_url, checks=checks)
+    normalized_url = normalize_url(accepted_url)
+    if is_already_exist(normalized_url):
+        flash('Страница уже существует', 'warning')
+        url_id = get_id_from_urls_db(normalized_url)
+        return redirect(url_for('display_current_site', id=url_id))
+    add_url_to_urls_db(normalized_url)
+    flash('Страница успешно добавлена', 'success')
+    url_id = get_id_from_urls_db(normalized_url)
+    return redirect(url_for('display_current_site', id=url_id))
 
 
 @app.get('/urls')
-def show_urls():
+def display_sites():
     sites = get_urls_from_both_db()
     return render_template('sites.html', sites=sites)
+
+
+@app.get('/urls/<id>')
+def display_current_site(id):
+    url_info = get_url_from_urls_db(id)
+    checks_info = get_checks_url_from_check_db(id)
+    return render_template('current_site.html',
+                           url_info=url_info, checks_info=checks_info)
 
 
 @app.post('/urls/<id>/checks')
 def check_url(id):
     try:
-        url = get_last_url_from_db(id)['name']
+        url = get_url_from_urls_db(id)['name']
         url_request = requests.get(url)
         url_request.raise_for_status()
         status_code = url_request.status_code
         parser_info = url_parser(url_request)
         add_url_to_check_db(id, status_code, parser_info)
     except requests.exceptions.HTTPError:
-        flash('Произошла ошибка при проверке', 'error')
-        return redirect(url_for('show_current_site', id=id))
-    flash('Страница успешно проверена', 'error')
-    return redirect(url_for('show_current_site', id=id))
+        flash('Произошла ошибка при проверке', 'danger')
+        return redirect(url_for('display_current_site', id=id))
+    flash('Страница успешно проверена', 'success')
+    return redirect(url_for('display_current_site', id=id))
 
 
 
