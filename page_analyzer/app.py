@@ -7,7 +7,8 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from page_analyzer.db import (add_url_to_urls_db, get_id_from_urls_db,
                               get_url_from_urls_db, add_url_to_check_db,
-                              get_checks_url_from_check_db, get_urls_from_both_db,
+                              get_checks_url_from_check_db,
+                              get_urls_from_both_db,
                               get_urls_name_from_urls_db)
 
 
@@ -37,7 +38,6 @@ def url_parser(url_request) -> dict[str, None]:
             'title': title_content}
 
 
-
 @app.get('/')
 def index():
     return render_template('index.html')
@@ -54,9 +54,8 @@ def add_url():
         flash('Страница уже существует', 'warning')
         url_id = get_id_from_urls_db(normalized_url)
         return redirect(url_for('display_current_site', id=url_id))
-    add_url_to_urls_db(normalized_url)
+    url_id = add_url_to_urls_db(normalized_url)
     flash('Страница успешно добавлена', 'success')
-    url_id = get_id_from_urls_db(normalized_url)
     return redirect(url_for('display_current_site', id=url_id))
 
 
@@ -88,7 +87,6 @@ def check_url(id):
         return redirect(url_for('display_current_site', id=id))
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('display_current_site', id=id))
-
 
 
 if __name__ == '__main__':
