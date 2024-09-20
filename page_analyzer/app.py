@@ -48,7 +48,7 @@ def add_url():
     accepted_url = request.form.get('url')
     if not validators.url(accepted_url):
         flash('Некорректный URL', 'danger')
-        return render_template('index.html')
+        return render_template('index.html', invalid_value=accepted_url)
     normalized_url = normalize_url(accepted_url)
     if is_already_exist(normalized_url):
         flash('Страница уже существует', 'warning')
