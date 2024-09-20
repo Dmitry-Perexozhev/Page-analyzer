@@ -82,7 +82,7 @@ def check_url(id):
         status_code = url_request.status_code
         parser_info = url_parser(url_request)
         add_url_to_check_db(id, status_code, parser_info)
-    except requests.exceptions.HTTPError:
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError):
         flash('Произошла ошибка при проверке', 'danger')
         return redirect(url_for('display_current_site', id=id))
     flash('Страница успешно проверена', 'success')
