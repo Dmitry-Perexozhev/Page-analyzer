@@ -15,9 +15,6 @@ validators = "^0.33.0"
 requests = "^2.32.3"
 beautifulsoup4 = "^4.12.3"
 
-[tool.poetry.scripts]
-gendiff = "gendiff.scripts.script:main"
-
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
 flake8 = "^7.1.0"
