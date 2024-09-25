@@ -43,7 +43,7 @@ def index():
     return render_template('index.html')
 
 
-@app.post('/')
+@app.post('/urls')
 def add_url():
     accepted_url = request.form.get('url')
     if not validators.url(accepted_url):
