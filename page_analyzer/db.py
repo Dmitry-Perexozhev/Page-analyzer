@@ -58,14 +58,16 @@ def get_url_from_urls_db(url_id):
             print("[INFO] PostgreSQL connection closed")
 
 
-def get_urls_name_from_urls_db():
+def get_url_name_from_urls_db(url_name):
     connection = None
     try:
         connection = psycopg2.connect(DATABASE_URL)
         with connection.cursor() as cursor:
-            cursor.execute("SELECT name FROM urls")
-            all_urls_name = [url[0] for url in cursor.fetchall()]
-            return all_urls_name
+            cursor.execute("SELECT name FROM urls WHERE name=%s", (url_name,))
+            result = cursor.fetchone()
+            if result is None:
+                return ''
+            return result[0]
     except Exception as _ex:
         print("[INFO] Error while working with PostgreSQL", _ex)
     finally:

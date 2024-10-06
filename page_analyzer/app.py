@@ -1,7 +1,7 @@
 import os
 import validators
 import requests
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import abort, Flask, render_template, request, flash, redirect, url_for
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
@@ -9,7 +9,7 @@ from page_analyzer.db import (add_url_to_urls_db, get_id_from_urls_db,
                               get_url_from_urls_db, add_url_to_check_db,
                               get_checks_url_from_check_db,
                               get_urls_from_both_db,
-                              get_urls_name_from_urls_db)
+                              get_url_name_from_urls_db)
 
 
 load_dotenv()
@@ -23,8 +23,8 @@ def normalize_url(url: str) -> str:
 
 
 def is_already_exist(url: str) -> bool:
-    urls_name = get_urls_name_from_urls_db()
-    return url in urls_name
+    urls_name = get_url_name_from_urls_db(url)
+    return url == urls_name
 
 
 def url_parser(url_request) -> dict[str, None]:
@@ -46,7 +46,7 @@ def index():
 @app.post('/urls')
 def add_url():
     accepted_url = request.form.get('url')
-    if not validators.url(accepted_url):
+    if not validators.url(accepted_url) and len(accepted_url) > 255:
         flash('Некорректный URL', 'danger')
         return render_template('index.html', invalid_value=accepted_url), 422
     normalized_url = normalize_url(accepted_url)
@@ -68,6 +68,8 @@ def display_sites():
 @app.get('/urls/<id>')
 def display_current_site(id):
     url_info = get_url_from_urls_db(id)
+    if url_info is None:
+        return abort(404)
     checks_info = get_checks_url_from_check_db(id)
     return render_template('current_site.html',
                            url_info=url_info, checks_info=checks_info)
