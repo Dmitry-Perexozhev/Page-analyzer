@@ -77,19 +77,11 @@ def get_urls_list():
     connection = psycopg2.connect(DATABASE_URL)
     with connection.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute("""
-                SELECT urls.id AS id, name, url_checks.created_at AS last_check, status_code
+                SELECT DISTINCT ON (id) urls.id AS id, name, url_checks.created_at AS last_check, status_code
                 FROM urls
-                LEFT OUTER JOIN (
-                    SELECT url_id, created_at, status_code
-                    FROM url_checks
-                    WHERE (url_id, id) IN (
-                        SELECT url_id, MAX(id)
-                        FROM url_checks
-                        GROUP BY url_id
-                    )
-                ) AS url_checks
+                LEFT OUTER JOIN url_checks
                 ON urls.id = url_checks.url_id
-                ORDER BY urls.id DESC
+                ORDER BY id DESC, last_check DESC
             """)
         sites = cursor.fetchall()
         url_replace_none = [
