@@ -14,7 +14,8 @@ Page Analyzer is a Flask-based web application that enables users to evaluate th
 ### Demo:
 
 You can see the application in action by visiting this link: [Page Analyzer](https://python-project-83-amyh.onrender.com)
-![last](https://github.com/user-attachments/assets/b3767de1-9be3-4103-9bc1-2f1394d1c9cd)
+
+![demo](https://github.com/user-attachments/assets/22f5a0e0-4e7b-4982-82bc-ef9a21072308)
 
 ### Installation requirements
 - Python 
@@ -34,7 +35,7 @@ cd python-project-83
 ```
 
 3. Set up environment variables.
-Open the `.env` file and replace the value of the SECRET_KEY and DATABASE_URL keys
+Open the .env file and replace the value of the SECRET_KEY and DATABASE_URL keys
 - `SECRET_KEY`: a secret key for your application.
 - `DATABASE_URL`: the connection string for your PostgreSQL database, formatted as `postgresql://username:password@localhost:5432/database_name`
 
@@ -46,7 +47,7 @@ make build
 
 Run local flask server
 ```
-make dev
+<font color="red">make dev</font>
 ```
 You can also run the server locally in development mode with the debugger active:
 ```
