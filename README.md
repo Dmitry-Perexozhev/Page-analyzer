@@ -46,6 +46,8 @@ make build
 #### Usage
 
 Run local flask server
+<span style="color: red;">Этот текст будет красным</span>
+<font color="red">make dev</font>
 ```
 <font color="red">make dev</font>
 ```
