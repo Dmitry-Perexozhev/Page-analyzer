@@ -36,7 +36,7 @@ git clone git@github.com:Dmitry-Perexozhev/python-project-83.git
 cd python-project-83
 ```
 3) Set up environment variables.
-Open the .env file and replace the value of the **SECRET_KEY** and **DATABASE_URL keys**
+Open the .env file and replace the value of the **SECRET_KEY** and **DATABASE_URL** keys
 - **`SECRET_KEY`**: a secret key for your application.
 - **`DATABASE_URL`**: the connection string for your PostgreSQL database, formatted as `postgresql://username:password@localhost:5432/database_name`
 4) Install the required dependencies using Poetry and make a migration. PostgreSQL must be running:
@@ -46,14 +46,15 @@ make build
 
 #### Usage
 
-Run local flask server
-
-<span style="color: red;">`make dev`</span>
-
-You can also run the server locally in development mode with the debugger active:
-
-<span style="color: red;">`make debug`</span>
-
-Run the production Gunicorn server
-
-<span style="color: red;">`make start`</span>
+- Run local flask server
+```
+make dev
+```
+- You can also run the server locally in development mode with the debugger active:
+```
+make debug
+```
+- Run the production Gunicorn server
+```
+make start
+```
