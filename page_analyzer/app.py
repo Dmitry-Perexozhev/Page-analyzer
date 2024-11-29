@@ -1,15 +1,26 @@
 import os
-from flask import Flask
-from dotenv import load_dotenv
-from flask import abort, render_template, request, flash, redirect, url_for
-from page_analyzer.url_utils import is_valid_url, normalize_url
-from page_analyzer.http_utils import url_parser, send_http_request
-from page_analyzer.db import (add_url_db, get_url_id,
-                              get_url, add_url_check,
-                              get_checks_url,
-                              get_urls_list,
-                              get_url_name)
 
+from dotenv import load_dotenv
+from flask import (
+    Flask,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
+from page_analyzer.db import (
+    add_url_check,
+    add_url_db,
+    get_checks_url,
+    get_url,
+    get_url_id,
+    get_url_name,
+    get_urls_list,
+)
+from page_analyzer.http_utils import send_http_request, url_parser
+from page_analyzer.url_utils import is_valid_url, normalize_url
 
 load_dotenv()
 app = Flask(__name__)
