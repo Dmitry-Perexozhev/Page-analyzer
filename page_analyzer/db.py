@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 from psycopg2.extras import RealDictCursor
 
 load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DATABASE_URL = os.getenv('DATABASE_URL_dev' if DEBUG else 'DATABASE_URL_deploy')
 
 
 def add_url_db(url):

@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+*.log
+dist/
+*.tar.gz
+coverage.xml
+*.test
+*.md
