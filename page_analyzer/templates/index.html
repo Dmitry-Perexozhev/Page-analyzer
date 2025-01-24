@@ -31,11 +31,11 @@
         {% block content %}
         <h1 class="display-3">Анализатор страниц</h1>
         <p class="lead">Бесплатно проверяйте сайты на SEO-пригодность</p>
-        <form action={{url_for('add_url')}} method="post" class="d-flex justify-content-center">
+        <form action={{url_for('add_url')}} method="post" class="d-flex justify-content-center flex-column flex-md-row">
             <label for="text" class="visually-hidden">Url для проверки</label>
             <input type="text" name="url" placeholder="https://www.example.com" value="{{ invalid_value }}"
                    class="form-control form-control-lg" required>
-            <input type="submit" class="btn btn-primary  btn-lg ms-3 px-5 text-uppercase mx-3" value="Проверить">
+            <input type="submit" class="btn btn-primary btn-lg ms-3 px-5 text-uppercase mt-3 mt-md-0 mx-3" value="Проверить">
         </form>
         {% endblock %}
     </div>
