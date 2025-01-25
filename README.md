@@ -13,7 +13,7 @@ Page Analyzer is a Flask-based web application that enables users to evaluate th
 
 ### Demo:
 
-You can see the application in action by visiting this link: [Page Analyzer](http://194.87.99.31:5000/)
+You can see the application in action by visiting this link: <a href="http://194.87.99.31:5000/" target="_blank">Page Analyzer</a>
 
 ![demo](https://github.com/user-attachments/assets/22f5a0e0-4e7b-4982-82bc-ef9a21072308)
 
