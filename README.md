@@ -13,7 +13,7 @@ Page Analyzer is a Flask-based web application that enables users to evaluate th
 
 ### Demo:
 
-You can see the application in action by visiting this link: [Page Analyzer](https://python-project-83-amyh.onrender.com)
+You can see the application in action by visiting this link: [Page Analyzer](http://194.87.99.31:5000/)
 
 ![demo](https://github.com/user-attachments/assets/22f5a0e0-4e7b-4982-82bc-ef9a21072308)
 
@@ -25,7 +25,7 @@ You can see the application in action by visiting this link: [Page Analyzer](htt
 - Make
 
 ### Getting Started
-#### Installation
+#### Installation 
 
 1) Clone the project repository to your local device:
 ```
@@ -35,16 +35,30 @@ git clone git@github.com:Dmitry-Perexozhev/python-project-83.git
 ```
 cd python-project-83
 ```
-3) Set up environment variables.
-Open the .env file and replace the value of the **SECRET_KEY** and **DATABASE_URL** keys
+3) Standard installation<br>
+Create the .env file and set up values for environment variables:<br>
 - **`SECRET_KEY`**: a secret key for your application.
-- **`DATABASE_URL`**: the connection string for your PostgreSQL database, formatted as `postgresql://username:password@localhost:5432/database_name`
-4) Install the required dependencies using Poetry and make a migration. PostgreSQL must be running:
+- **`DATABASE_URL_dev`**: the connection string for your PostgreSQL database, formatted as `postgresql://username:password@localhost:5432/database_name`
+- **`DEBUG`**: True<br>
+Install the required dependencies using Poetry and make a migration. PostgreSQL must be running:
 ```
 make build
 ```
+4) Installation using Docker<br>
+Install Docker and Docker Compose<br>
+Create the .env file and set up values for environment variables:<br>
+- **`SECRET_KEY`**: a secret key for your application.
+- **`DATABASE_URL_deploy`**: the connection string for your PostgreSQL database, formatted as `postgresql://username:password@localhost:5432/database_name`
+- **`DEBUG`**: False
+- **`POSTGRES_USER`**: postgres username 
+- **`POSTGRES_PASSWORD`**: user password
+- **`POSTGRES_DB`**: name database<br>
+Build the app. Gunicorn server is in use:
+```
+docker-compose up --build -d
+```
 
-#### Usage
+#### Usage for standart installation
 
 - Run local flask server
 ```
